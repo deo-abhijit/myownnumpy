@@ -3,44 +3,52 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> 
 
-
 using namespace std;
 namespace py = pybind11;
 
 class Array {
-  vector<int> shape ;
-  vector<int> stride;
+    vector<int> shape;
+    vector<int> stride;
+    vector<float> data;
 
-  vector<float> data;
 public:
-  Array(vector<float> data_, vector<int> stride_, vector<int> shape_) : data(data_), stride(stride_), shape(shape_) {};
-  
-  void printData() {
-    for (float val : data) {
-      cout << val << " ";
+    // Parameterized constructor
+    Array(vector<float> data_, vector<int> stride_, vector<int> shape_) : data(data_), stride(stride_), shape(shape_) {}
+
+    // Default constructor
+    Array() {}
+
+    // Addition operator
+    Array operator+(Array const& arr) {
+        Array ans;
+        if (arr.shape == shape) {
+            ans.shape = shape;
+            for (size_t i = 0; i < data.size(); i++) {
+                ans.data.push_back(data[i] + arr.data[i]);
+            }
+        } else {
+            cout << "Addition not possible" << endl;
+        }
+        return ans;
     }
-    cout << endl;
-  }
-  
+
+
+    char pretty_print(){
+      for (auto i:data){
+        cout<<i<<" ";
+
+      }
+      cout <<endl;
+      return '\n';
+    }
 };
 
-
-int main() {
-  vector<float> data = {1.0, 2.0, 3.0,4.0};
-  vector<int> stride = {1};
-  vector<int> shape = {3};
-
-  Array array(data, stride, shape);
-  array.printData();
-
-  return 0;};
-
-
-
-PYBIND11_MODULE(module_name, module_handle) {
-  module_handle.doc() = "I'm a docstring hehe";
-  py::class_<Array>(module_handle,"Array").def(
-    py::init<vector<float>, vector<int>,vector<int>>()
-  );
-
+PYBIND11_MODULE(abhijits_numpy, module_handle) {
+    module_handle.doc() = "I'm a docstring hehe";
+    py::class_<Array>(module_handle, "Array")
+        .def(py::init<vector<float>, vector<int>, vector<int>>())  // Constructor binding
+        .def("__add__", &Array::operator+
+        ).def("__str__", &Array::pretty_print)
+        
+;  // Addition operator binding
 }
