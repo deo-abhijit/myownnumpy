@@ -1,6 +1,11 @@
 #include <vector>
 #include <iostream>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h> 
+
+
 using namespace std;
+namespace py = pybind11;
 
 class Array {
   vector<int> shape ;
@@ -28,4 +33,14 @@ int main() {
   Array array(data, stride, shape);
   array.printData();
 
-  return 0;}
+  return 0;};
+
+
+
+PYBIND11_MODULE(module_name, module_handle) {
+  module_handle.doc() = "I'm a docstring hehe";
+  py::class_<Array>(module_handle,"Array").def(
+    py::init<vector<float>, vector<int>,vector<int>>()
+  );
+
+}
