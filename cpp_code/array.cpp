@@ -15,7 +15,7 @@ public:
     // Parameterized constructor
     Array(vector<float> data_, vector<int> stride_, vector<int> shape_) : data(data_), stride(stride_), shape(shape_) {}
 
-    // Default constructor
+    // Default constructor; just makes an instance without any values assigned; 
     Array() {}
 
     // Addition operator
@@ -31,16 +31,51 @@ public:
         }
         return ans;
     }
-
-
-    char pretty_print(){
-      for (auto i:data){
-        cout<<i<<" ";
-
-      }
-      cout <<endl;
-      return '\n';
+    
+    // sub oper
+    Array operator-(Array const& arr){
+        Array ans;
+        if (arr.shape == shape) {
+            ans.shape = shape;
+            for (size_t i = 0; i < data.size(); i++) {
+                ans.data.push_back(data[i] - arr.data[i]);
+            }
+        } else {
+            cout << "Subtraction not possible" << endl;
+        }
+        return ans;
     }
+
+    //div operator
+    Array operator/(Array const& arr){
+        Array ans;
+        if (arr.shape == shape) {
+            ans.shape = shape;
+            for (size_t i = 0; i < data.size(); i++) {
+                ans.data.push_back(data[i] / arr.data[i]);
+            }
+        } else {
+            cout << "Division not possible" << endl;
+        }
+        return ans;
+    }
+
+    // multiplication operator
+    Array operator*(Array const& arr){
+        Array ans;
+        if (arr.shape == shape) {
+            ans.shape = shape;
+            for (size_t i = 0; i < data.size(); i++) {
+                ans.data.push_back(data[i] * arr.data[i]);
+            }
+        } else {
+            cout << "Division not possible" << endl;
+        }
+        return ans;
+    }
+
+
+
 };
 
 PYBIND11_MODULE(abhijits_numpy, module_handle) {
@@ -48,7 +83,11 @@ PYBIND11_MODULE(abhijits_numpy, module_handle) {
     py::class_<Array>(module_handle, "Array")
         .def(py::init<vector<float>, vector<int>, vector<int>>())  // Constructor binding
         .def("__add__", &Array::operator+
-        ).def("__str__", &Array::pretty_print)
+        ).def("__sub__", &Array::operator-
+        ).def("__truediv__", &Array::operator/
+        ).def("__mul__", &Array::operator*
+        )
+
         
 ;  // Addition operator binding
 }
